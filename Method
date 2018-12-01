@@ -1,0 +1,258 @@
+//Michele Cavaliere 18219365
+//Nicole Berty 18246702
+//Sean Lynch 18245137
+
+public class Methods {
+
+    public Object[] Workbook = new Object[256];
+    public int LargestSheet = 0;
+    public int SheetNum = 1;
+
+    // Adds a sheet to the list of sheets.
+    public boolean Add() {
+        boolean add = true;
+        if (LargestSheet == 256) {
+            add = false;
+        }
+        else {
+            Workbook[LargestSheet] = "Sheet" + Integer.toString(SheetNum);
+            SheetNum++;
+            LargestSheet++;
+            add = true;
+        }
+        return add;
+    }
+
+    //Removes sheets from the list of sheets when given a sheet name.
+    public int remove(String sheetname) {
+        Variables();
+        int remove = 0;
+        for (int i = 0; i < LargestSheet; i++) {
+            if (sheetname.equals(Workbook[i])) {
+                remove = i;
+            }
+        }
+        if (LargestSheet != 1) {
+            Workbook[remove] = null;
+            int x = 1;
+            Workbook[remove] = Workbook[remove + x];
+            while (Workbook[remove + x] != null) {
+                Workbook[remove + x] = Workbook[remove + 1 + x];
+                ++x;
+            }
+            Workbook[remove + x] = null;
+            Variables();
+        }
+        else {
+            remove = -1;
+        }
+        return remove;
+    }
+
+    //Removes a sheet from the list of sheets when given the index of the sheet.
+   public String remove(int index) {
+        Variables();
+        String remove = null;
+        if (LargestSheet != 1) {
+            Workbook[index] = remove;
+            int i = 1;
+            Workbook[index] = Workbook[index + i];
+            while (Workbook[index + i + 1] != null) {
+                Workbook[index + i] = Workbook[index + 1 + i];
+                ++i;
+            }
+            Workbook[index + i] = remove;
+            Variables();
+        } else {
+            remove = null;
+        }
+        return remove;
+   }
+
+   //Moves a sheet to another index when given the sheet name.
+   public int move(String from, String to, boolean before) {
+        Variables();
+        int move = 0;
+        int indexFrom = 0;
+        int indexTo = 0;
+        for (int i = 0; i < LargestSheet; i++) {
+            if ((Workbook[i].toString()).equalsIgnoreCase(from)) {
+                indexFrom = i;
+            }
+        }
+        for (int i = 0; i < LargestSheet; i++) {
+            if ((Workbook[i].toString()).equalsIgnoreCase(to)) {
+                indexTo = i;
+            }
+        }
+        if (indexFrom > indexTo) {
+            before = true;
+        }
+        else {
+            before = false;
+        }
+        move = indexFrom - indexTo;
+        Object workbook;
+        if (before && Workbook[indexTo] != null && Workbook[indexFrom] != null && Workbook[indexTo] != Workbook[indexFrom]) {
+            if(move == 1) {
+                System.out.println("The sheet has been moved 1 space.");
+            } else {
+                System.out.println("The sheet has been moved " + move + " spaces.");
+            }
+            workbook = Workbook[indexFrom];
+            Workbook[indexFrom] = Workbook[indexTo];
+            Workbook[indexTo] = workbook;
+        } else {
+            move = -1;
+        }
+        return move;
+   }
+
+   // Moves a sheet from one index position to another when given two index positions.
+   public String move(int from, int to, boolean before) {
+        Variables();
+        before = true;
+        String move = "";
+        int indexFrom = 0;
+        int indexTo = 0;
+        for (int i = 0; i < LargestSheet - 1; i++) {
+            if (index(Workbook[i].toString()) == from) {
+                indexFrom = i;
+            }
+        }
+        for (int i = 0; i < LargestSheet - 1; i++) {
+            if (index(Workbook[i].toString()) == to) {
+                indexTo = i;
+            }
+        }
+        Object workbook;
+        if (before && Workbook[indexTo] != null && Workbook[indexFrom] != null && Workbook[indexTo] != Workbook[indexFrom]) {
+            System.out.println("The sheet that moved is " + Workbook[indexFrom]);
+            workbook = Workbook[indexFrom];
+            Workbook[indexFrom] = Workbook[indexTo];
+            Workbook[indexTo] = workbook;
+        } else {
+            move = null;
+        }
+        return move;
+   }
+    
+    //Moves a sheet to the end of the list when given the index of the sheet. 
+   public String moveToEnd(int from) {
+        Variables();
+        String moveToEnd = null;
+        if (from == LargestSheet) {
+            return moveToEnd;
+        } else {
+            if (index(Workbook[from].toString()) >= 1 && Workbook[from] != null) {
+                Workbook[LargestSheet] = Workbook[from];
+                Workbook[from] = null;
+            }
+            Object workbook;
+            Workbook[from] = null;
+            while (Workbook[from] == null && from != LargestSheet) {
+                workbook = Workbook[from];
+                Workbook[from] = Workbook[from + 1];
+                Workbook[from + 1] = workbook;
+                from++;
+            }
+        }
+        Variables();
+        return moveToEnd;
+   }
+
+    //Moves a sheet to the end when given the name of the sheet.
+   public int moveToEnd(String from) {
+        Variables();
+        int moveToEnd = 0;
+        if (from.equalsIgnoreCase(Workbook[LargestSheet - 1].toString())) {
+            return moveToEnd;
+        } else {
+            if (index(from) >= 1) {
+                Workbook[LargestSheet] = Workbook[index(from)];
+            } else {
+                moveToEnd = -1;
+            }
+            Object workbook;
+            int to = index(from);
+            Workbook[to] = null;
+            while (Workbook[to] == null && to != LargestSheet) {
+                workbook = Workbook[to];
+                Workbook[to] = Workbook[to + 1];
+                Workbook[to + 1] = workbook;
+                to++;
+            }
+        }
+        Variables();
+        return moveToEnd;
+   }
+
+    //Renames a sheet when given the current name and a new name to replace it.
+   public int rename(String currentName, String newName) {
+        Variables();
+        int rename = 0;
+        currentName = Workbook[index(currentName)].toString();
+        if (currentName != null) {
+            Workbook[index(currentName)] = newName;
+        }else {
+            rename = -1;
+        }
+        return rename;
+   }
+
+
+    //Returns the index position when given the name of a sheet.
+   public int index(String sheetName) {
+        Variables();
+        int indexLoc = 0;
+        for (int i = 0; i < Workbook.length - 1; i++) {
+            if (sheetName.equalsIgnoreCase(Workbook[i].toString())) {
+                indexLoc = i;
+                break;
+            }else {
+                indexLoc = -1;
+            }
+        }
+        return indexLoc;
+   }
+
+    //Returns the sheet name when given an index position.
+   public String sheetName(int index) {
+        Variables();
+        String sheetName = null;
+        if (index <= LargestSheet && index > -1) {
+            sheetName = Workbook[index].toString();
+        } else {
+            sheetName = "null";
+        }
+        return sheetName;
+   }
+
+    //Displays all the sheets that have been created.
+   public void Display() {
+        Variables();
+        for (int i = 0; i < LargestSheet; i++) {
+            System.out.println(Workbook[i]);
+        }
+        return;
+   }
+    
+    //Returns the number of sheets that are in the list.
+   public int length() {
+        Variables();
+        int i  = LargestSheet;
+        if (i == 0) {
+            i = -1;
+        }
+        return i;
+   }
+
+   public void Variables() {
+        LargestSheet = 0;
+        for (int i = 0; i < Workbook.length; i++) {
+            if (Workbook[i] != null) {
+                LargestSheet ++;
+            }
+        }
+   }
+}
